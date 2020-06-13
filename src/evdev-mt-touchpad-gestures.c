@@ -699,6 +699,14 @@ tp_gesture_post_gesture(struct tp_dispatch *tp, uint64_t time)
 		tp->gesture.state =
 			tp_gesture_handle_state_unknown(tp, time);
 
+	if (tp->gesture.state == GESTURE_STATE_UNKNOWN && oldstate == GESTURE_STATE_NONE) {
+        struct normalized_coords delta = { 0.1, 0.1 };
+        evdev_post_scroll(tp->device,
+                          time,
+                          LIBINPUT_POINTER_AXIS_SOURCE_FINGER,
+                          &delta);
+	}
+
 	if (tp->gesture.state == GESTURE_STATE_SCROLL)
 		tp->gesture.state =
 			tp_gesture_handle_state_scroll(tp, time);
